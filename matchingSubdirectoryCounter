@@ -1,0 +1,32 @@
+@echo off
+setlocal EnableDelayedExpansion
+
+REM Get the name of the current directory
+for %%i in ("%CD%") do set "CurrDirName=%%~nxi"
+
+REM Initialize control variables
+set "Found=1"
+set "Depth=0"
+
+REM Start the loop
+:loop
+if "!Found!"=="0" goto :end
+set "Found=0"
+
+REM Check each subdirectory in the current directory
+for /d %%d in (*) do (
+    if "%%~nxd"=="!CurrDirName!" (
+        REM Match found, increment depth and change directory
+        set /a Depth+=1
+        cd "%%d"
+        set "Found=1"
+        goto :loop
+    )
+)
+REM If we reach here, no matching subdirectory was found we are done counting and can escape the loop
+set "Found=0:
+goto :loop
+:end
+echo Finished traversing. Maximum depth reached was: !Depth!
+
+endlocal
